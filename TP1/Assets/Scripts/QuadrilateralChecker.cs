@@ -8,77 +8,118 @@ public struct Vector
     public Vector2 End;
 }
 
+[System.Serializable]
+public class NamedQuadrilateral
+{
+    public Vector[] Vectors;
+    public string Name { get; set; }
+    public bool IsQuadrilateral { get; set; }
+    public Color DrawColor { get; set; }
+}
+
 public class QuadrilateralChecker : MonoBehaviour
 {
-    private Vector[][] vectorsExamples;
-
-    public Vector[] customExample;
+    [SerializeField] private NamedQuadrilateral customExample;
+    private NamedQuadrilateral[] quadrilateralExamples;
 
     public bool shouldDrawCustom = false;
     public bool shouldDrawExamples = false;
 
-
     private void Start()
     {
+        InitializeExampleQuads();
+        QuadCheck();
+    }
+
+    private void InitializeExampleQuads()
+    {
         // Definir vectores de ejemplo para cuadriláteros correctos e incorrectos
-        Vector[] correctExample1 = new Vector[4]
+        NamedQuadrilateral correctExample1 = new NamedQuadrilateral
         {
-            new Vector { Start = new Vector2(0, 0), End = new Vector2(1, 0) },
-            new Vector { Start = new Vector2(1, 0), End = new Vector2(1, 1) },
-            new Vector { Start = new Vector2(1, 1), End = new Vector2(0, 1) },
-            new Vector { Start = new Vector2(0, 1), End = new Vector2(0, 0) }
+            Name = "Correct Example 1",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(0, 0), End = new Vector2(1, 0) },
+                new Vector { Start = new Vector2(1, 0), End = new Vector2(1, 1) },
+                new Vector { Start = new Vector2(1, 1), End = new Vector2(0, 1) },
+                new Vector { Start = new Vector2(0, 1), End = new Vector2(0, 0) }
+            }
         };
 
-        Vector[] correctExample2 = new Vector[4]
+        NamedQuadrilateral correctExample2 = new NamedQuadrilateral
         {
-            new Vector { Start = new Vector2(2, -1), End = new Vector2(3, 0) },
-            new Vector { Start = new Vector2(3, 0), End = new Vector2(3, 1) },
-            new Vector { Start = new Vector2(3, 1), End = new Vector2(2, 1) },
-            new Vector { Start = new Vector2(2, -1), End = new Vector2(2, 1) }
-        }; 
-        
-        Vector[] correctExample3 = new Vector[4]
-        {
-            new Vector { Start = new Vector2(5, -1), End = new Vector2(6, 0) },
-            new Vector { Start = new Vector2(6, 0), End = new Vector2(8, 1) },
-            new Vector { Start = new Vector2(8, 1), End = new Vector2(5, 1) },
-            new Vector { Start = new Vector2(5, -1), End = new Vector2(5, 1) }
+            Name = "Correct Example 2",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(2, -1), End = new Vector2(3, 0) },
+                new Vector { Start = new Vector2(3, 0), End = new Vector2(3, 1) },
+                new Vector { Start = new Vector2(3, 1), End = new Vector2(2, 1) },
+                new Vector { Start = new Vector2(2, -1), End = new Vector2(2, 1) }
+            }
         };
 
-        Vector[] correctExample4 = new Vector[4]
+        NamedQuadrilateral correctExample3 = new NamedQuadrilateral
         {
-            new Vector { Start = new Vector2(20, 0), End = new Vector2(22, 0) },
-            new Vector { Start = new Vector2(22, 0), End = new Vector2(21, 2) },
-            new Vector { Start = new Vector2(21, 2), End = new Vector2(20, 1) },
-            new Vector { Start = new Vector2(20, 1), End = new Vector2(20, 0) }
-        };
-        
-        Vector[] correctExample5 = new Vector[4]
-        {
-            new Vector { Start = new Vector2(25, 0), End = new Vector2(27, 2) },
-            new Vector { Start = new Vector2(27, 2), End = new Vector2(29, 0) },
-            new Vector { Start = new Vector2(29, 0), End = new Vector2(27, -2) },
-            new Vector { Start = new Vector2(27, -2), End = new Vector2(25, 0) }
+            Name = "Correct Example 3",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(5, -1), End = new Vector2(6, 0) },
+                new Vector { Start = new Vector2(6, 0), End = new Vector2(8, 1) },
+                new Vector { Start = new Vector2(8, 1), End = new Vector2(5, 1) },
+                new Vector { Start = new Vector2(5, -1), End = new Vector2(5, 1) }
+            }
         };
 
-        Vector[] incorrectExample1 = new Vector[4]
+        NamedQuadrilateral correctExample4 = new NamedQuadrilateral
         {
-            new Vector { Start = new Vector2(10, 0), End = new Vector2(11, 0) },
-            new Vector { Start = new Vector2(11, 0), End = new Vector2(10, 2) },
-            new Vector { Start = new Vector2(10, 2), End = new Vector2(11, 2) },
-            new Vector { Start = new Vector2(11, 2), End = new Vector2(10, 0) }
+            Name = "Correct Example 4",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(20, 0), End = new Vector2(22, 0) },
+                new Vector { Start = new Vector2(22, 0), End = new Vector2(21, 2) },
+                new Vector { Start = new Vector2(21, 2), End = new Vector2(20, 1) },
+                new Vector { Start = new Vector2(20, 1), End = new Vector2(20, 0) }
+            }
         };
 
-        Vector[] incorrectExample2 = new Vector[4]
+        NamedQuadrilateral correctExample5 = new NamedQuadrilateral
         {
-            new Vector { Start = new Vector2(15, 0), End = new Vector2(16, 2) },
-            new Vector { Start = new Vector2(16, 2), End = new Vector2(15, 2) },
-            new Vector { Start = new Vector2(15, 2), End = new Vector2(15, 0) },
-            new Vector { Start = new Vector2(16, 2), End = new Vector2(16, 0) }
+            Name = "Correct Example 5",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(25, 0), End = new Vector2(27, 2) },
+                new Vector { Start = new Vector2(27, 2), End = new Vector2(29, 0) },
+                new Vector { Start = new Vector2(29, 0), End = new Vector2(27, -2) },
+                new Vector { Start = new Vector2(27, -2), End = new Vector2(25, 0) }
+            }
+        };
+
+        NamedQuadrilateral incorrectExample1 = new NamedQuadrilateral
+        {
+            Name = "Incorrect Example 1",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(10, 0), End = new Vector2(11, 0) },
+                new Vector { Start = new Vector2(11, 0), End = new Vector2(10, 2) },
+                new Vector { Start = new Vector2(10, 2), End = new Vector2(11, 2) },
+                new Vector { Start = new Vector2(11, 2), End = new Vector2(10, 0) }
+            }
+        };
+
+        NamedQuadrilateral incorrectExample2 = new NamedQuadrilateral
+        {
+            Name = "Incorrect Example 2",
+            Vectors = new Vector[4]
+            {
+                new Vector { Start = new Vector2(15, 0), End = new Vector2(16, 2) },
+                new Vector { Start = new Vector2(16, 2), End = new Vector2(15, 2) },
+                new Vector { Start = new Vector2(15, 2), End = new Vector2(15, 0) },
+                new Vector { Start = new Vector2(16, 2), End = new Vector2(16, 0) }
+            }
         };
 
         // Inicializar el arreglo y agregar los vectores
-        vectorsExamples = new Vector[][]
+        quadrilateralExamples = new NamedQuadrilateral[]
         {
             correctExample1,
             correctExample2,
@@ -90,9 +131,30 @@ public class QuadrilateralChecker : MonoBehaviour
         };
     }
 
-    bool AreVectorsFormingQuadrilateral(Vector[] vectors)
+    private void QuadCheck()
     {
-        // Utilizar un diccionario para contar las ocurrencias de cada punto final
+        // Verificar los ejemplos y guardar el resultado
+        foreach (NamedQuadrilateral namedQuadrilateral in quadrilateralExamples)
+        {
+            namedQuadrilateral.IsQuadrilateral = AreVectorsFormingQuadrilateral(namedQuadrilateral);
+            namedQuadrilateral.DrawColor = (namedQuadrilateral.IsQuadrilateral ? Color.green : Color.red);
+            Debug.Log($"{namedQuadrilateral.Name}: {(namedQuadrilateral.IsQuadrilateral ? "Es un cuadrilátero válido" : "No es un cuadrilátero válido")}");
+        }
+
+        // Verificar el ejemplo personalizado
+        if (customExample.Vectors != null && customExample.Vectors.Length > 0)
+        {
+            bool isCustomQuadrilateral = AreVectorsFormingQuadrilateral(new NamedQuadrilateral { Name = "Custom Example", Vectors = customExample.Vectors });
+            customExample.DrawColor = (isCustomQuadrilateral ? Color.green : Color.red);
+            Debug.Log($"Custom Example: {(isCustomQuadrilateral ? "Es un cuadrilátero válido" : "No es un cuadrilátero válido")}");
+        }
+    }
+
+    private bool AreVectorsFormingQuadrilateral(NamedQuadrilateral namedQuadrilateral)
+    {
+        var vectors = namedQuadrilateral.Vectors;
+
+        // Utilizar un diccionario para contar las instancias de cada punto final
         Dictionary<Vector2, int> pointCount = new Dictionary<Vector2, int>();
 
         foreach (var vector in vectors)
@@ -135,10 +197,13 @@ public class QuadrilateralChecker : MonoBehaviour
             }
         }
 
+        float area = CalculateArea(vectors);
+        Debug.Log($"Nombre del cuadrilátero: {namedQuadrilateral.Name}, Área del cuadrilátero: {area}");
+
         return true; // Cuadrilátero válido si todas las verificaciones pasan
     }
 
-    bool DoLinesIntersect(Vector line1, Vector line2)
+    private bool DoLinesIntersect(Vector line1, Vector line2)
     {
         Vector2 p1 = line1.Start;
         Vector2 p2 = line1.End;
@@ -160,16 +225,34 @@ public class QuadrilateralChecker : MonoBehaviour
         return (t >= 0 && t <= 1 && u >= 0 && u <= 1);
     }
 
-    void OnDrawGizmos()
+    private float CalculateArea(Vector[] vectors)
+    {
+        // Utilizar la fórmula de la suma de áreas de los triángulos
+        Vector2[] points = new Vector2[4];
+        for (int i = 0; i < 4; i++)
+        {
+            points[i] = vectors[i].Start;
+        }
+
+        float area = Mathf.Abs(
+            (points[0].x * (points[1].y - points[3].y) +
+             points[1].x * (points[2].y - points[0].y) +
+             points[2].x * (points[3].y - points[1].y) +
+             points[3].x * (points[0].y - points[2].y)) / 2f
+        );
+
+        return area;
+    }
+
+    private void OnDrawGizmos()
     {
         if (shouldDrawCustom)
         {
-            if (customExample != null && customExample.Length > 0)
+            if (customExample.Vectors != null && customExample.Vectors.Length > 0)
             {
-                // Verificar si los vectores forman un cuadrilátero válido
-                Gizmos.color = AreVectorsFormingQuadrilateral(customExample) ? Color.green : Color.red;
+                Gizmos.color = customExample.DrawColor;
 
-                foreach (var vector in customExample)
+                foreach (var vector in customExample.Vectors)
                 {
                     Gizmos.DrawLine(vector.Start, vector.End);
                 }
@@ -178,16 +261,15 @@ public class QuadrilateralChecker : MonoBehaviour
 
         if (shouldDrawExamples)
         {
-            if (vectorsExamples != null)
+            if (quadrilateralExamples != null)
             {
-                foreach (Vector[] vectorArray in vectorsExamples)
+                foreach (NamedQuadrilateral namedQuadrilateral in quadrilateralExamples)
                 {
-                    if (vectorArray != null && vectorArray.Length > 0)
+                    if (namedQuadrilateral.Vectors != null && namedQuadrilateral.Vectors.Length > 0)
                     {
-                        // Verificar si los vectores forman un cuadrilátero válido
-                        Gizmos.color = AreVectorsFormingQuadrilateral(vectorArray) ? Color.green : Color.red;
+                        Gizmos.color = namedQuadrilateral.DrawColor;
 
-                        foreach (var vector in vectorArray)
+                        foreach (var vector in namedQuadrilateral.Vectors)
                         {
                             Gizmos.DrawLine(vector.Start, vector.End);
                         }
@@ -195,6 +277,5 @@ public class QuadrilateralChecker : MonoBehaviour
                 }
             }
         }
-
     }
 }

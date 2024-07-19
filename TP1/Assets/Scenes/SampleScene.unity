@@ -346,13 +346,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   customExample:
-  - Start: {x: 2, y: -1}
-    End: {x: 3, y: 0}
-  - Start: {x: 3, y: 0}
-    End: {x: 3, y: 1}
-  - Start: {x: 3, y: 1}
-    End: {x: 2, y: 1}
-  - Start: {x: 2, y: -1}
-    End: {x: 2, y: 1}
-  shouldDrawCustom: 0
-  shouldDrawExamples: 1
+    Vectors:
+    - Start: {x: 0, y: 2}
+      End: {x: 2, y: 2}
+    - Start: {x: 0, y: 2}
+      End: {x: 0, y: 0}
+    - Start: {x: 2, y: 2}
+      End: {x: 2, y: 0}
+    - Start: {x: 0, y: 0}
+      End: {x: 2, y: 0}
+  shouldDrawCustom: 1
+  shouldDrawExamples: 0
