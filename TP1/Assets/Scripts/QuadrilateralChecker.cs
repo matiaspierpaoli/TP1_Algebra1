@@ -1,11 +1,14 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using System.Collections.Generic;
+using System;
+using System.Diagnostics.Tracing;
 
 [System.Serializable]
 public struct Vector
 {
     public Vector2 Start;
     public Vector2 End;
+    public int id;
 }
 
 [System.Serializable]
@@ -33,7 +36,7 @@ public class QuadrilateralChecker : MonoBehaviour
 
     private void InitializeExampleQuads()
     {
-        // Definir vectores de ejemplo para cuadril·teros correctos e incorrectos
+        // Definir vectores de ejemplo para cuadril√°teros correctos e incorrectos
         NamedQuadrilateral correctExample1 = new NamedQuadrilateral
         {
             Name = "Correct Example 1",
@@ -138,7 +141,7 @@ public class QuadrilateralChecker : MonoBehaviour
         {
             namedQuadrilateral.IsQuadrilateral = AreVectorsFormingQuadrilateral(namedQuadrilateral);
             namedQuadrilateral.DrawColor = (namedQuadrilateral.IsQuadrilateral ? Color.green : Color.red);
-            Debug.Log($"{namedQuadrilateral.Name}: {(namedQuadrilateral.IsQuadrilateral ? "Es un cuadril·tero v·lido" : "No es un cuadril·tero v·lido")}");
+            Debug.Log($"{namedQuadrilateral.Name}: {(namedQuadrilateral.IsQuadrilateral ? "Es un cuadril√°tero v√°lido" : "No es un cuadril√°tero v√°lido")}");
         }
 
         // Verificar el ejemplo personalizado
@@ -146,61 +149,8 @@ public class QuadrilateralChecker : MonoBehaviour
         {
             bool isCustomQuadrilateral = AreVectorsFormingQuadrilateral(new NamedQuadrilateral { Name = "Custom Example", Vectors = customExample.Vectors });
             customExample.DrawColor = (isCustomQuadrilateral ? Color.green : Color.red);
-            Debug.Log($"Custom Example: {(isCustomQuadrilateral ? "Es un cuadril·tero v·lido" : "No es un cuadril·tero v·lido")}");
+            Debug.Log($"Custom Example: {(isCustomQuadrilateral ? "Es un cuadril√°tero v√°lido" : "No es un cuadril√°tero v√°lido")}");
         }
-    }
-
-    private bool AreVectorsFormingQuadrilateral(NamedQuadrilateral namedQuadrilateral)
-    {
-        var vectors = namedQuadrilateral.Vectors;
-
-        // Utilizar un diccionario para contar las instancias de cada punto final
-        Dictionary<Vector2, int> pointCount = new Dictionary<Vector2, int>();
-
-        foreach (var vector in vectors)
-        {
-            if (pointCount.ContainsKey(vector.Start))
-                pointCount[vector.Start]++;
-            else
-                pointCount[vector.Start] = 1;
-
-            if (pointCount.ContainsKey(vector.End))
-                pointCount[vector.End]++;
-            else
-                pointCount[vector.End] = 1;
-        }
-
-        // Un cuadril·tero v·lido debe tener exactamente 4 puntos, cada uno apareciendo dos veces
-        if (pointCount.Count != 4)
-            return false;
-
-        foreach (var count in pointCount.Values)
-        {
-            if (count != 2)
-                return false;
-        }
-
-        // Verificar si hay lÌneas que se cruzan, ignorando segmentos que comparten puntos finales
-        for (int i = 0; i < vectors.Length; i++)
-        {
-            for (int j = i + 1; j < vectors.Length; j++)
-            {
-                // Asegurarse de que las lÌneas no compartan puntos finales
-                if (vectors[i].Start != vectors[j].Start && vectors[i].Start != vectors[j].End &&
-                    vectors[i].End != vectors[j].Start && vectors[i].End != vectors[j].End)
-                {
-                    if (DoLinesIntersect(vectors[i], vectors[j]))
-                    {
-                        return false; // Se encontrÛ una intersecciÛn inv·lida
-                    }
-                }
-            }
-        }
-
-        float area = CalculateArea(vectors);
-        Debug.Log($"Nombre del cuadril·tero: {namedQuadrilateral.Name}, ¡rea del cuadril·tero: {area}");
-
-        return true; // Cuadril·tero v·lido si todas las verificaciones pasan
     }
 
     private bool DoLinesIntersect(Vector line1, Vector line2)
@@ -216,18 +166,18 @@ public class QuadrilateralChecker : MonoBehaviour
         float determinant = d1.x * d2.y - d1.y * d2.x;
 
         if (determinant == 0)
-            return false; // Las lÌneas son paralelas o colineales
+            return false; // Las l√≠neas son paralelas o colineales
 
         float t = ((p3.x - p1.x) * d2.y - (p3.y - p1.y) * d2.x) / determinant;
         float u = ((p3.x - p1.x) * d1.y - (p3.y - p1.y) * d1.x) / determinant;
 
-        // Verificar si la intersecciÛn est· dentro de los segmentos de lÌnea
+        // Verificar si la intersecci√≥n est√° dentro de los segmentos de l√≠nea
         return (t >= 0 && t <= 1 && u >= 0 && u <= 1);
     }
 
     private float CalculateArea(Vector[] vectors)
     {
-        // Utilizar la fÛrmula de la suma de ·reas de los tri·ngulos
+        // Utilizar la f√≥rmula de la suma de √°reas de los tri√°ngulos
         Vector2[] points = new Vector2[4];
         for (int i = 0; i < 4; i++)
         {
@@ -242,6 +192,109 @@ public class QuadrilateralChecker : MonoBehaviour
         );
 
         return area;
+    }
+
+    private bool AreVectorsFormingQuadrilateral(NamedQuadrilateral namedQuadrilateral)
+    {
+        var vectors = namedQuadrilateral.Vectors;
+
+        // Lista para almacenar intersecciones
+        List<Vector2> intersections = new List<Vector2>();
+
+        // Verificar si hay l√≠neas que se cruzan
+        for (int i = 0; i < vectors.Length; i++)
+        {
+            for (int j = i + 1; j < vectors.Length; j++)
+            {
+                {
+                    if (DoLinesIntersect(vectors[i], vectors[j], out Vector2 intersection))
+                    {
+                        if (!intersections.Contains(intersection))
+                            intersections.Add(intersection); 
+                    }
+                }
+            }
+        }
+
+        if (intersections.Count < 4)
+        {
+            return false;
+        }
+
+        int counter = 0;
+
+        for (int i = 0; i < vectors.Length; i++)
+        {
+            for (int j = i + 1; j < vectors.Length; j++)
+            {
+                if (DoLinesIntersect(vectors[i], vectors[j]))
+                {
+                    for (int k = 0; k < vectors.Length; k++)
+                    {
+                        if (k != i)
+                        {
+                            if (DoLinesIntersect(vectors[i], vectors[k]))
+                            {
+                                counter++;
+                            }
+                        }
+                    }
+
+                    for (int k = 0; k < vectors.Length; k++)
+                    {
+                        if (k != j)
+                        {
+                            if (DoLinesIntersect(vectors[j], vectors[k]))
+                            {
+                                counter++;
+                            }
+                        }
+                    }
+                }                
+            }
+        }
+
+        if (counter != 16)
+        {
+            return false;
+        }
+
+        float area = CalculateArea(vectors);
+        Debug.Log($"Nombre del cuadril√°tero: {namedQuadrilateral.Name}, √Årea del cuadril√°tero: {area}");
+
+        return true; // Cuadril√°tero v√°lido si todas las verificaciones pasan
+    }
+
+    private bool DoLinesIntersect(Vector line1, Vector line2, out Vector2 intersection)
+    {
+        Vector2 p1 = line1.Start;
+        Vector2 p2 = line1.End;
+        Vector2 p3 = line2.Start;
+        Vector2 p4 = line2.End;
+
+        Vector2 d1 = p2 - p1;
+        Vector2 d2 = p4 - p3;
+
+        float determinant = d1.x * d2.y - d1.y * d2.x;
+
+        if (determinant == 0)
+        {
+            intersection = Vector2.zero;
+            return false; // Las l√≠neas son paralelas o colineales
+        }
+
+        float t = ((p3.x - p1.x) * d2.y - (p3.y - p1.y) * d2.x) / determinant;
+        float u = ((p3.x - p1.x) * d1.y - (p3.y - p1.y) * d1.x) / determinant;
+
+        // Verificar si la intersecci√≥n est√° dentro de los segmentos de l√≠nea
+        if (t >= 0 && t <= 1 && u >= 0 && u <= 1)
+        {
+            intersection = p1 + t * d1;
+            return true;
+        }
+
+        intersection = Vector2.zero;
+        return false;
     }
 
     private void OnDrawGizmos()
