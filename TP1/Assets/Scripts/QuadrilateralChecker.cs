@@ -222,11 +222,15 @@ public class QuadrilateralChecker : MonoBehaviour
         }
 
         int counter = 0;
+        int otherCounter = 0;
 
         for (int i = 0; i < vectors.Length; i++)
         {
             for (int j = i + 1; j < vectors.Length; j++)
             {
+                if (otherCounter != 4)
+                    otherCounter = 0;
+
                 if (DoLinesIntersect(vectors[i], vectors[j]))
                 {
                     for (int k = 0; k < vectors.Length; k++)
@@ -236,6 +240,7 @@ public class QuadrilateralChecker : MonoBehaviour
                             if (DoLinesIntersect(vectors[i], vectors[k]))
                             {
                                 counter++;
+                                otherCounter++;
                             }
                         }
                     }
@@ -247,6 +252,7 @@ public class QuadrilateralChecker : MonoBehaviour
                             if (DoLinesIntersect(vectors[j], vectors[k]))
                             {
                                 counter++;
+                                otherCounter++;
                             }
                         }
                     }
@@ -258,6 +264,12 @@ public class QuadrilateralChecker : MonoBehaviour
         {
             return false;
         }
+
+        if (otherCounter == 4)
+        {
+            return false;
+        }
+
 
         float area = CalculateArea(vectors);
         Debug.Log($"Nombre del cuadrilátero: {namedQuadrilateral.Name}, Área del cuadrilátero: {area}");

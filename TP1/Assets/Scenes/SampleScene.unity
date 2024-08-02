@@ -355,14 +355,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   customExample:
     Vectors:
-    - Start: {x: -2, y: 7}
+    - Start: {x: -2, y: 8}
       End: {x: -2, y: -4}
       id: 1
-    - Start: {x: -2, y: 5}
-      End: {x: 2, y: -1}
+    - Start: {x: 5, y: 8}
+      End: {x: -2, y: -4}
       id: 2
-    - Start: {x: -2, y: 7}
-      End: {x: 3, y: -1}
+    - Start: {x: -12.25, y: 11}
+      End: {x: 4, y: 0}
       id: 3
     - Start: {x: -4, y: 0}
       End: {x: 4, y: 0}
